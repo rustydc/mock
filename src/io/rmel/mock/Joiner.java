@@ -57,7 +57,7 @@ final class Joiner {
   }
 
   private StackTraceElement[] trimTrace(StackTraceElement[] trace) {
-    return Arrays.copyOfRange(trace, 1, trace.length);
+    return Arrays.copyOfRange(trace, 3, trace.length);
   }
 
 
