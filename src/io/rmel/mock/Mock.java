@@ -1,6 +1,7 @@
 package io.rmel.mock;
 
 import java.util.Objects;
+import org.hamcrest.Matcher;
 
 public final class Mock {
 
@@ -67,6 +68,11 @@ public final class Mock {
   public interface Function3<A, B, C> {
     void apply(A a, B b, C c);
   }
+
+  public static <T> T argThat(Matcher<T> matcher) {
+    j.get().argThat(matcher);
+    return null;
+  };
 
   public static void assertEqual(Object actual, Object expected) {
     if (!Objects.equals(expected, actual)) {

@@ -1,9 +1,12 @@
 package io.rmel.mock;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
+import org.hamcrest.Matcher;
 
 final class Joiner {
 
@@ -11,6 +14,7 @@ final class Joiner {
   private StackTraceElement[] trace;
   
   private Object[] arguments;
+  private List<Matcher<? extends Object>> matchers = new ArrayList<>();
   private Object[] expected;
   private Object returnValue;
   private Throwable throwable;
@@ -24,8 +28,6 @@ final class Joiner {
   private final CyclicBarrier barrier =
       new CyclicBarrier(2, () -> Joiner.this.checkExpectation());
 
-  Joiner() {}
-
   private void checkExpectation() {
     failure = null;
 
@@ -35,20 +37,46 @@ final class Joiner {
     }
 
     if (!expectationInstanceId.equals(callInstanceId)) {
-      failure = "Method call to wrong method on right mock.";
+      failure = "Method call to wrong method.";
       return;
     }
 
-    if (expected.length != arguments.length) {
-      failure = "Expected " + expected.length + " arguments but got "
-          + arguments.length + ".";
+    if (expected.length > 0 && !matchers.isEmpty()) {
+      failure = "Can't mix and match values and matchers.";
+      return;
     }
 
-    for (int i = 0; i < expected.length; i++) {
-      if (expected[i] != arguments[i] && !expected[i].equals(arguments[i])) {
-        failure =
-            "Expected '" + expected[i] + "' but got '" + arguments[i] + "'.";
+    if (expected.length > 0 && arguments.length > 0) {
+      if (expected.length != arguments.length) {
+        failure = "Expected " + expected.length + " arguments but got "
+            + arguments.length + ".";
         return;
+      }
+
+      for (int i = 0; i < expected.length; i++) {
+        if (expected[i] != arguments[i] && !expected[i].equals(arguments[i])) {
+          failure =
+              "Expected '" + expected[i] + "' but got '" + arguments[i] + "'.";
+          return;
+        }
+      }
+    }
+
+    if (expected.length > 0 && !matchers.isEmpty()) {
+      if (expected.length != matchers.size()) {
+        failure = "Expected " + matchers.size() + " arguments but got "
+            + arguments.length + ".";
+        return;
+      }
+
+      for (int i = 0; i < matchers.size(); i++) {
+        if (!matchers.get(i).matches(arguments[i])) {
+        }
+        if (expected[i] != arguments[i] && !expected[i].equals(arguments[i])) {
+          failure =
+              "Expected '" + expected[i] + "' but got '" + arguments[i] + "'.";
+          return;
+        }
       }
     }
 
@@ -128,6 +156,10 @@ final class Joiner {
     }
 
     return returnValue;
+  }
+ 
+  void argThat(Matcher<? extends Object> matcher) {
+    matchers.add(matcher);
   }
 }
 
