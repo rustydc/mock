@@ -5,7 +5,7 @@
 
   <target name="compile">
     <mkdir dir="build/classes"/>
-    <javac srcdir="src" destdir="build/classes"/>
+    <javac srcdir="src" destdir="build/classes" includeantruntime="false"/>
   </target>
 
   <target name="jar" depends="compile">
@@ -19,7 +19,8 @@
 
   <target name="compile-example" depends="jar">
     <mkdir dir="build/example/classes"/>
-    <javac srcdir="example" destdir="build/example/classes">
+    <javac srcdir="example" destdir="build/example/classes"
+        includeantruntime="false">
       <classpath>
         <pathelement location="build/jar/mock.jar"/>
       </classpath>
