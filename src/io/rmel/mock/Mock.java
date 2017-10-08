@@ -4,7 +4,6 @@ import java.util.Objects;
 
 public class Mock {
 
-  // TODO(rmel): Threadlocal.
   private static final InheritableThreadLocal<Joiner> j = new InheritableThreadLocal<>();
 
   public static <T> void expect(T in, T out) {
