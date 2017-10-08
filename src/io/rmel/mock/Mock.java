@@ -25,7 +25,7 @@ public final class Mock {
       Function1<A> stimulus, Function1<A> expectation) {
     j.set(new Joiner());
     Mocker<A> m = new Mocker<>(j.get(), a);
-    Expectation.run(
+    Expectation.run(j.get(),
         () -> expectation.apply(m.control()),
 	() -> stimulus.apply(m.mock()));
     j.set(null);
@@ -36,7 +36,7 @@ public final class Mock {
     j.set(new Joiner());
     Mocker<A> m1 = new Mocker<>(j.get(), a);
     Mocker<B> m2 = new Mocker<>(j.get(), b);
-    Expectation.run(
+    Expectation.run(j.get(),
         () -> expectation.apply(m1.control(), m2.control()),
         () -> stimulus.apply(m1.mock(), m2.mock()));
     j.set(null);
@@ -48,7 +48,7 @@ public final class Mock {
     Mocker<A> m1 = new Mocker<>(j.get(), a);
     Mocker<B> m2 = new Mocker<>(j.get(), b);
     Mocker<C> m3 = new Mocker<>(j.get(), c);
-    Expectation.run(
+    Expectation.run(j.get(),
         () -> expectation.apply(m1.control(), m2.control(), m3.control()),
         () -> stimulus.apply(m1.mock(), m2.mock(), m3.mock()));
     j.set(null);

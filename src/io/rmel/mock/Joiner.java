@@ -30,6 +30,20 @@ final class Joiner {
 
   private void checkExpectation() {
     failure = null;
+    if (expectationMethodId == null && callMethodId == null) {
+      // Successful completion.
+      return;
+    }
+
+    if (expectationMethodId == null) {
+      failure = "Unexpected method call.";
+      return;
+    }
+
+    if (callMethodId == null) {
+      failure = "Expectation unfulfilled.";
+      return;
+    }
 
     if (!expectationInstanceId.equals(callInstanceId)) {
       failure = "Method call to wrong mock instance.";
@@ -128,6 +142,38 @@ final class Joiner {
     this.trace = trace;
   }
 
+  void endExpectations() {
+    this.expectationMethodId = null;
+    this.trace = null;
+    expect(null);
+  }
+
+  void endStimulus() {
+    this.callMethodId = null;
+
+    // TODO(rmel): Deduplicate.
+    try {
+      barrier.await();
+    } catch (InterruptedException | BrokenBarrierException e) {
+      throw new RuntimeException(
+          "Interrupted while waiting for expectation.", e);
+    }
+
+    if (failure != null) {
+      if (trace != null) {
+        // Stack trace, message.
+        ExpectationFailedException e =
+            new ExpectationFailedException(failure);
+        e.setStackTrace(trimTrace(trace));
+        throw e;
+      }
+      ExpectationFailedException e =
+          new ExpectationFailedException(failure);
+      e.setStackTrace(trimTrace(e.getStackTrace()));
+      throw e;
+    }
+  }
+
   Object call(String instanceId, String methodId, Object[] arguments)
       throws Throwable {
     this.callInstanceId = instanceId;
@@ -142,11 +188,18 @@ final class Joiner {
     }
 
     if (failure != null) {
-      // Stack trace, message.
-      Exception cause = new ExpectationFailedException("Awaiting expectation.");
-      cause.setStackTrace(trimTrace(trace));
+      if (trace != null) {
+        // Stack trace, message.
+        Exception cause =
+            new ExpectationFailedException("Awaiting expectation.");
+        cause.setStackTrace(trimTrace(trace));
+        ExpectationFailedException e =
+            new ExpectationFailedException(failure, cause);
+        e.setStackTrace(trimTrace(e.getStackTrace()));
+        throw e;
+      }
       ExpectationFailedException e =
-          new ExpectationFailedException(failure, cause);
+          new ExpectationFailedException(failure);
       e.setStackTrace(trimTrace(e.getStackTrace()));
       throw e;
     }
