@@ -56,17 +56,17 @@ public final class Mock {
         
   @FunctionalInterface
   public interface Function1<A> {
-    void apply(A a);
+    void apply(A a) throws Exception;
   }
 
   @FunctionalInterface
   public interface Function2<A, B> {
-    void apply(A a, B b);
+    void apply(A a, B b) throws Exception;
   }
 
   @FunctionalInterface
   public interface Function3<A, B, C> {
-    void apply(A a, B b, C c);
+    void apply(A a, B b, C c) throws Exception;
   }
 
   public static <T> T argThat(Matcher<T> matcher) {
