@@ -2,7 +2,7 @@ package io.rmel.mock;
 
 import java.util.Objects;
 
-public class Mock {
+public final class Mock {
 
   private static final InheritableThreadLocal<Joiner> j = new InheritableThreadLocal<>();
 

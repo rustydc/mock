@@ -1,8 +1,8 @@
 package io.rmel.mock;
 
-public class Expectation {
+final class Expectation {
 
-  public static void run(Runnable expectations, Runnable test) {
+  static void run(Runnable expectations, Runnable test) {
     final ThrowableHolder h = new ThrowableHolder();
     Thread expectationsThread = new Thread(expectations, "expectations");
     expectationsThread.setUncaughtExceptionHandler((th, ex) -> {});

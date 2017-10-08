@@ -14,7 +14,7 @@ final class Mocker<T> {
   private final Joiner j;
   private final String ID = UUID.randomUUID().toString();
 
-  public Mocker(Joiner j, Class<T> cls) {
+  Mocker(Joiner j, Class<T> cls) {
     this.cls = cls;
     this.j = j;
     mock = makeFake(cls,
@@ -33,11 +33,11 @@ final class Mocker<T> {
         cls.getClassLoader(), new Class[] { cls }, handler));
   }
 
-  public T mock() {
+  T mock() {
     return mock;
   }
 
-  public T control() {
+  T control() {
     return control;
   }
 }

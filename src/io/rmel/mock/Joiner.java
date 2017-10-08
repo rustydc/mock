@@ -5,7 +5,7 @@ import java.util.Objects;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
-public class Joiner {
+final class Joiner {
 
   private String failure;
   private StackTraceElement[] trace;
@@ -24,7 +24,7 @@ public class Joiner {
   private final CyclicBarrier barrier =
       new CyclicBarrier(2, () -> Joiner.this.checkExpectation());
 
-  public Joiner() {}
+  Joiner() {}
 
   private void checkExpectation() {
     failure = null;
@@ -61,7 +61,7 @@ public class Joiner {
   }
 
 
-  public void expectThrow(Throwable t) {
+  void expectThrow(Throwable t) {
     this.pendingThrowable = t;
 
     try {
@@ -75,7 +75,7 @@ public class Joiner {
     }
   }
 
-  public void expect(Object returnValue) {
+  void expect(Object returnValue) {
     this.pendingReturnValue = returnValue;
 
     try {
@@ -89,7 +89,7 @@ public class Joiner {
     }
   }
 
-  public void expectation(
+  void expectation(
       String instanceId,
       String methodId,
       Object[] expected,
@@ -100,7 +100,7 @@ public class Joiner {
     this.trace = trace;
   }
 
-  public Object call(String instanceId, String methodId, Object[] arguments)
+  Object call(String instanceId, String methodId, Object[] arguments)
       throws Throwable {
     this.callInstanceId = instanceId;
     this.callMethodId = methodId;
