@@ -7,16 +7,11 @@ import java.util.Objects;
 import java.util.UUID;
 
 final class Mocker<T> {
-  private final Class<T> cls;
   private final T mock;
   private final T control;
 
-  private final Joiner j;
-  private final String ID = UUID.randomUUID().toString();
-
   Mocker(Joiner j, Class<T> cls) {
-    this.cls = cls;
-    this.j = j;
+    String ID = UUID.randomUUID().toString();
     mock = makeFake(cls,
         (proxy, method, args) -> (Object) j.call(ID, method.getName(), args));
     control = makeFake(cls, 
