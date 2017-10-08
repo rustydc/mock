@@ -28,7 +28,7 @@ public class UnitTest {
         },
         (foo1, foo2) -> {
           expect(foo1.fooMethod("input1"), "output1");
-          expectThrow(foo2.fooMethod("input2"), new RuntimeException("Error."));
+          expect(foo2.fooMethod("input2"), "output2");
         });
     
     System.err.println("Pass.");
