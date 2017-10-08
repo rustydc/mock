@@ -3,7 +3,7 @@ package io.rmel.mock;
 public class Expectation {
 
   public static void run(Runnable expectations, Runnable test) {
-    final Holder h = new Holder();
+    final ThrowableHolder h = new ThrowableHolder();
     Thread expectationsThread = new Thread(expectations, "expectations");
     expectationsThread.setUncaughtExceptionHandler((th, ex) -> {});
     expectationsThread.start();
@@ -16,14 +16,14 @@ public class Expectation {
     try { 
       testThread.join();
       if (h.value != null) {
-        throw new RuntimeException("Test failed.", h.value);
+        throw new UnexpectedException(h.value);
       }
     } catch (InterruptedException e) {
       throw new RuntimeException("Interrupted while running test.", e);
     }
   }
 
-  static class Holder {
+  static class ThrowableHolder {
     Throwable value = null;
   }
 }

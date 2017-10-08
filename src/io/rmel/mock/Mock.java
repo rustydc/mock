@@ -14,6 +14,13 @@ public class Mock {
     j.expect(out); 
   }
 
+  public static <T> void expectThrow(T in, Throwable t) {
+    if (j == null) {
+      throw new RuntimeException("Called 'expectThrow' outside expectation.");
+    }
+    j.expectThrow(t); 
+  }
+
   public static <A> void run(Class<A> a,
       Function1<A> stimulus, Function1<A> expectation) {
     j = new Joiner();

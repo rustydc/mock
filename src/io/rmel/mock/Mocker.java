@@ -18,7 +18,7 @@ final class Mocker<T> {
     this.cls = cls;
     this.j = j;
     mock = makeFake(cls,
-        (proxy, method, args) -> (String) j.call(ID, method.getName(), args));
+        (proxy, method, args) -> (Object) j.call(ID, method.getName(), args));
     control = makeFake(cls, 
         (proxy, method, args) -> {
           j.expectation(ID, method.getName(), args,

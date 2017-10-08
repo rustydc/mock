@@ -1,5 +1,6 @@
 import static io.rmel.mock.Mock.run;
 import static io.rmel.mock.Mock.expect;
+import static io.rmel.mock.Mock.expectThrow;
 import static io.rmel.mock.Mock.assertEqual;
 
 public class UnitTest {
@@ -27,7 +28,7 @@ public class UnitTest {
         },
         (foo1, foo2) -> {
           expect(foo1.fooMethod("input1"), "output1");
-          expect(foo2.fooMethod("input2"), "output2");
+          expectThrow(foo2.fooMethod("input2"), new RuntimeException("Error."));
         });
     
     System.err.println("Pass.");

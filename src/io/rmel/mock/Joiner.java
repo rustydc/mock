@@ -13,7 +13,9 @@ public class Joiner {
   private Object[] arguments;
   private Object[] expected;
   private Object returnValue;
+  private Throwable throwable;
   private Object pendingReturnValue;
+  private Throwable pendingThrowable;
   private String expectationInstanceId;
   private String expectationMethodId;
   private String callInstanceId;
@@ -51,10 +53,26 @@ public class Joiner {
     }
 
     this.returnValue = this.pendingReturnValue;
+    this.throwable = this.pendingThrowable;
   }
 
   private StackTraceElement[] trimTrace(StackTraceElement[] trace) {
     return Arrays.copyOfRange(trace, 1, trace.length);
+  }
+
+
+  public void expectThrow(Throwable t) {
+    this.pendingThrowable = t;
+
+    try {
+      barrier.await();
+    } catch (InterruptedException | BrokenBarrierException e) {
+      throw new RuntimeException("Interrupted while waiting for mock call.", e);
+    }
+
+    if (failure != null) {
+      throw new ExpectationFailedException("Expectations thread.");
+    }
   }
 
   public void expect(Object returnValue) {
@@ -82,7 +100,8 @@ public class Joiner {
     this.trace = trace;
   }
 
-  public Object call(String instanceId, String methodId, Object[] arguments) {
+  public Object call(String instanceId, String methodId, Object[] arguments)
+      throws Throwable {
     this.callInstanceId = instanceId;
     this.callMethodId = methodId;
     this.arguments = arguments;
@@ -102,6 +121,10 @@ public class Joiner {
           new ExpectationFailedException(failure, cause);
       e.setStackTrace(trimTrace(e.getStackTrace()));
       throw e;
+    }
+
+    if (throwable != null) {
+      throw throwable;
     }
 
     return returnValue;
