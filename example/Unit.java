@@ -9,6 +9,7 @@ public class Unit {
 
   public String method(String input) {
     f1.fooMethod(input + "1");
+    f1.voidMethod(4);
     return f2.fooMethod(input + "2");
   }
 }

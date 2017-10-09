@@ -5,20 +5,24 @@ import org.hamcrest.Matcher;
 
 public final class Mock {
 
-  private static final InheritableThreadLocal<Joiner> j = new InheritableThreadLocal<>();
+  private static final InheritableThreadLocal<Joiner> j =
+      new InheritableThreadLocal<>();
 
-  public static <T> void expect(T in, T out) {
-    if (j.get() == null) {
-      throw new RuntimeException("Called 'expect' outside expectation.");
-    }
-    j.get().expect(out); 
+  public static <T> T expect(T mock) {
+    return mock;
   }
 
-  public static <T> void expectThrow(T in, Throwable t) {
+  public static <T> T expect(T mock, Object obj) {
+    j.get().expect(obj);
+    return mock;
+  }
+
+  public static <T> T expectThrow(T mock, Throwable t) {
     if (j.get() == null) {
       throw new RuntimeException("Called 'expectThrow' outside expectation.");
     }
     j.get().expectThrow(t); 
+    return mock;
   }
 
   public static <A> void run(Class<A> a,

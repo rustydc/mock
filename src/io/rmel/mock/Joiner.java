@@ -119,6 +119,17 @@ final class Joiner {
 
   void expect(Object returnValue) {
     this.pendingReturnValue = returnValue;
+  }
+
+  void expectation(
+      String instanceId,
+      String methodId,
+      Object[] expected,
+      StackTraceElement[] trace) {
+    this.expectationInstanceId = instanceId;
+    this.expectationMethodId = methodId;
+    this.expected = expected;
+    this.trace = trace;
 
     try {
       barrier.await();
@@ -131,21 +142,11 @@ final class Joiner {
     }
   }
 
-  void expectation(
-      String instanceId,
-      String methodId,
-      Object[] expected,
-      StackTraceElement[] trace) {
-    this.expectationInstanceId = instanceId;
-    this.expectationMethodId = methodId;
-    this.expected = expected;
-    this.trace = trace;
-  }
-
   void endExpectations() {
     this.expectationMethodId = null;
     this.trace = null;
     expect(null);
+    expectation(null, null, null, null);
   }
 
   void endStimulus() {

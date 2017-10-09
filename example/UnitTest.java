@@ -15,8 +15,9 @@ public class UnitTest {
           assertEqual(output, "output2");
         },
         foo -> {
-          expect(foo.fooMethod("input1"), "output1");
-          expect(foo.fooMethod("input2"), "output2");
+          expect(foo, "output1").fooMethod("input1");
+          expect(foo).voidMethod(4);
+          expect(foo, "output2").fooMethod("input2");
         });
     System.err.println("Pass.");
           
@@ -27,8 +28,9 @@ public class UnitTest {
           assertEqual(output, "output2");
         },
         (foo1, foo2) -> {
-          expect(foo1.fooMethod("input1"), "output1");
-          expect(foo2.fooMethod("input2"), "output2");
+          expect(foo1, "output1").fooMethod("input1");
+          expect(foo1).voidMethod(4);
+          expect(foo2, "output2").fooMethod("input2");
         });
     
     System.err.println("Pass.");
