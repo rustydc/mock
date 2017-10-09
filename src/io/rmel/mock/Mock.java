@@ -8,25 +8,25 @@ public final class Mock {
   private static final InheritableThreadLocal<Joiner> j =
       new InheritableThreadLocal<>();
 
-  public static <T> T expect(T mock) {
-    return mock;
+  public static <T> T expect(Control<T> mock) {
+    return mock.getMock();
   }
 
-  public static <T> T expect(T mock, Object obj) {
+  public static <T> T expect(Control<T> mock, Object obj) {
     j.get().expect(obj);
-    return mock;
+    return mock.getMock();
   }
 
-  public static <T> T expectThrow(T mock, Throwable t) {
+  public static <T> T expectThrow(Control<T> mock, Throwable t) {
     if (j.get() == null) {
       throw new RuntimeException("Called 'expectThrow' outside expectation.");
     }
     j.get().expectThrow(t); 
-    return mock;
+    return mock.getMock();
   }
 
   public static <A> void run(Class<A> a,
-      Function1<A> stimulus, Function1<A> expectation) {
+      Function1<A> stimulus, Function1<Control<A>> expectation) {
     j.set(new Joiner());
     Mocker<A> m = new Mocker<>(j.get(), a);
     Expectation.run(j.get(),
@@ -36,7 +36,8 @@ public final class Mock {
   }
 
   public static <A, B> void run(Class<A> a, Class<B> b,
-      Function2<A, B> stimulus, Function2<A, B> expectation) {
+      Function2<A, B> stimulus,
+      Function2<Control<A>, Control<B>> expectation) {
     j.set(new Joiner());
     Mocker<A> m1 = new Mocker<>(j.get(), a);
     Mocker<B> m2 = new Mocker<>(j.get(), b);
@@ -47,7 +48,8 @@ public final class Mock {
   }
 
   public static <A, B, C> void run(Class<A> a, Class<B> b, Class<C> c,
-      Function3<A, B, C> stimulus, Function3<A, B, C> expectation) {
+      Function3<A, B, C> stimulus,
+      Function3<Control<A>, Control<B>, Control<C>> expectation) {
     j.set(new Joiner());
     Mocker<A> m1 = new Mocker<>(j.get(), a);
     Mocker<B> m2 = new Mocker<>(j.get(), b);

@@ -8,18 +8,19 @@ import java.util.UUID;
 
 final class Mocker<T> {
   private final T mock;
-  private final T control;
+  private final Control<T> control;
 
   Mocker(Joiner j, Class<T> cls) {
     String ID = UUID.randomUUID().toString();
     mock = makeFake(cls,
         (proxy, method, args) -> (Object) j.call(ID, method.getName(), args));
-    control = makeFake(cls, 
-        (proxy, method, args) -> {
-          j.expectation(ID, method.getName(), args,
-              Thread.currentThread().getStackTrace());
-          return null;
-        });
+    control = new Control(
+        makeFake(cls,
+            (proxy, method, args) -> {
+              j.expectation(ID, method.getName(), args,
+                  Thread.currentThread().getStackTrace());
+              return null;
+             }));
   }
  
   @SuppressWarnings("unchecked")
@@ -32,7 +33,7 @@ final class Mocker<T> {
     return mock;
   }
 
-  T control() {
+  Control<T> control() {
     return control;
   }
 }
