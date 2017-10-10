@@ -9,7 +9,11 @@ public class Unit {
 
   public String method(String input) {
     f1.fooMethod(input + "1");
-    f1.voidMethod(4);
+    try {
+      f1.voidMethod(4);
+    } catch (RuntimeException e) {
+      f2.voidMethod(5);
+    }
     return f2.fooMethod(input + "2");
   }
 }

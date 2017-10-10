@@ -31,7 +31,8 @@ public class UnitTest {
         },
         (foo1, foo2) -> {
           expect(foo1, "output1").fooMethod(argThat(is("input1")));
-          expect(foo1).voidMethod(4);
+          expectThrow(foo1, new RuntimeException()).voidMethod(4);
+          expect(foo2).voidMethod(5);
           expect(foo2, "output2").fooMethod("input2");
         });
     
