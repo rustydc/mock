@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 import org.hamcrest.Matcher;
+import org.hamcrest.StringDescription;
 
 final class Joiner {
 
@@ -55,12 +56,12 @@ final class Joiner {
       return;
     }
 
-    if (expected.length > 0 && !matchers.isEmpty()) {
+    if (arguments.length != matchers.size() && !matchers.isEmpty()) {
       failure = "Can't mix and match values and matchers.";
       return;
     }
 
-    if (expected.length > 0 && arguments.length > 0) {
+    if (expected != null && expected.length > 0 && arguments.length > 0) {
       if (expected.length != arguments.length) {
         failure = "Expected " + expected.length + " arguments but got "
             + arguments.length + ".";
@@ -76,8 +77,8 @@ final class Joiner {
       }
     }
 
-    if (expected.length > 0 && !matchers.isEmpty()) {
-      if (expected.length != matchers.size()) {
+    if (arguments.length > 0 && !matchers.isEmpty()) {
+      if (arguments.length != matchers.size()) {
         failure = "Expected " + matchers.size() + " arguments but got "
             + arguments.length + ".";
         return;
@@ -85,10 +86,13 @@ final class Joiner {
 
       for (int i = 0; i < matchers.size(); i++) {
         if (!matchers.get(i).matches(arguments[i])) {
-        }
-        if (expected[i] != arguments[i] && !expected[i].equals(arguments[i])) {
-          failure =
-              "Expected '" + expected[i] + "' but got '" + arguments[i] + "'.";
+          StringDescription d = new StringDescription();
+          d.appendText("Expected [");
+          matchers.get(i).describeTo(d);
+          d.appendText("], but got [");
+          matchers.get(i).describeMismatch(arguments[i], d);
+          d.appendText("].");
+          failure = d.toString();
           return;
         }
       }
@@ -96,6 +100,8 @@ final class Joiner {
 
     this.returnValue = this.pendingReturnValue;
     this.throwable = this.pendingThrowable;
+    this.expected = null;
+    this.matchers = new ArrayList<>();
   }
 
   private StackTraceElement[] trimTrace(StackTraceElement[] trace) {
@@ -105,16 +111,6 @@ final class Joiner {
 
   void expectThrow(Throwable t) {
     this.pendingThrowable = t;
-
-    try {
-      barrier.await();
-    } catch (InterruptedException | BrokenBarrierException e) {
-      throw new RuntimeException("Interrupted while waiting for mock call.", e);
-    }
-
-    if (failure != null) {
-      throw new ExpectationFailedException("Expectations thread.");
-    }
   }
 
   void expect(Object returnValue) {
@@ -128,7 +124,9 @@ final class Joiner {
       StackTraceElement[] trace) {
     this.expectationInstanceId = instanceId;
     this.expectationMethodId = methodId;
-    this.expected = expected;
+    if (matchers.isEmpty()) {
+      this.expected = expected;
+    }
     this.trace = trace;
 
     try {
@@ -206,7 +204,12 @@ final class Joiner {
     }
 
     if (throwable != null) {
-      throw throwable;
+      Throwable t = throwable;
+      t.fillInStackTrace();
+      t.setStackTrace(trimTrace(t.getStackTrace()));
+      throwable = null;
+      pendingThrowable = null;
+      throw t;
     }
 
     return returnValue;

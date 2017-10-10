@@ -1,7 +1,9 @@
-import static io.rmel.mock.Mock.run;
+import static io.rmel.mock.Mock.argThat;
+import static io.rmel.mock.Mock.assertEqual;
 import static io.rmel.mock.Mock.expect;
 import static io.rmel.mock.Mock.expectThrow;
-import static io.rmel.mock.Mock.assertEqual;
+import static io.rmel.mock.Mock.run;
+import static org.hamcrest.CoreMatchers.is;
 
 public class UnitTest {
 
@@ -28,7 +30,7 @@ public class UnitTest {
           assertEqual(output, "output2");
         },
         (foo1, foo2) -> {
-          expect(foo1, "output1").fooMethod("input1");
+          expect(foo1, "output1").fooMethod(argThat(is("input1")));
           expect(foo1).voidMethod(4);
           expect(foo2, "output2").fooMethod("input2");
         });
