@@ -1,6 +1,5 @@
 package io.rmel.mock;
 
-import java.util.Objects;
 import org.hamcrest.Matcher;
 
 public final class Mock {
@@ -79,12 +78,4 @@ public final class Mock {
     j.get().argThat(matcher);
     return null;
   };
-
-  public static void assertEqual(Object actual, Object expected) {
-    if (!Objects.equals(expected, actual)) {
-      throw new RuntimeException(
-          "Assertion failed: Expected '" + expected + "', but got '"
-              + actual + "'.");
-    }
-  }
 }

@@ -1,5 +1,5 @@
+import static io.rmel.mock.Assertions.assertEqual;
 import static io.rmel.mock.Mock.argThat;
-import static io.rmel.mock.Mock.assertEqual;
 import static io.rmel.mock.Mock.expect;
 import static io.rmel.mock.Mock.expectThrow;
 import static io.rmel.mock.Mock.run;
