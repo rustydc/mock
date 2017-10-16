@@ -8,7 +8,6 @@ import static org.hamcrest.CoreMatchers.is;
 public class UnitTest {
 
   public static void main(String[] args) {
-    System.err.println("Running.");
 
     run(Foo.class,
         foo -> {
@@ -35,7 +34,6 @@ public class UnitTest {
           expect(foo2).voidMethod(5);
           expect(foo2, "output2").fooMethod("input2");
         });
-    
     System.err.println("Pass.");
   }
 }

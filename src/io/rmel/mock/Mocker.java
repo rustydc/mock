@@ -3,22 +3,22 @@ package io.rmel.mock;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.concurrent.atomic.AtomicLong;
 
 final class Mocker<T> {
+  private static AtomicLong idCounter = new AtomicLong(0);
   private final T mock;
   private final Control<T> control;
 
-  Mocker(Joiner j, Class<T> cls) {
-    String ID = UUID.randomUUID().toString();
+  Mocker(MockRun mockRun, Class<T> cls) {
+    long id = idCounter.incrementAndGet();
     mock = makeFake(cls,
-        (proxy, method, args) -> (Object) j.call(ID, method.getName(), args));
+        (proxy, method, args) ->
+            (Object) mockRun.call(id, method.getName(), args));
     control = new Control(
         makeFake(cls,
             (proxy, method, args) -> {
-              j.expectation(ID, method.getName(), args,
-                  Thread.currentThread().getStackTrace());
+              mockRun.setExpectation(id, method.getName(), args);
               return null;
              }));
   }

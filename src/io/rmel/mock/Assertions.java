@@ -25,8 +25,4 @@ public final class Assertions {
     throw new RuntimeException("Assertion failed: Expected an exception.");
   }
 
-  @FunctionalInterface
-  public interface ThrowingFunction {
-    void run() throws Throwable;
-  }
 }

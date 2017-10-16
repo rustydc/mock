@@ -1,7 +1,11 @@
 package io.rmel.mock;
 
 class UnexpectedException extends RuntimeException {
-  public UnexpectedException(Throwable t) {
+  UnexpectedException(String message, Throwable t) {
+    super(message, t);
+  }
+
+  UnexpectedException(Throwable t) {
     super(t);
   }
 }
